@@ -74,9 +74,9 @@ public class Database{
 	}
 
 	public boolean deleteNode(List<String> deletePath){
-		Node tempNode= searchProduct(deletePath.get(0));
+		Node tempNode= head;
 		if(tempNode!=null)	{
-			for(int i=1;i<deletePath.size();i++){
+			for(int i=0;i<deletePath.size();i++){
 				if(tempNode.isChild(deletePath.get(i))==-1){
 					return false;
 					

@@ -12,7 +12,7 @@ public class Admin{
         this.database=database;
     }
 
-    public void insert(String category, String productName) throws ProductNameAlreadyExistsException{
+    public void insert(String category, String productName) throws ProductNameAlreadyExistsException,CategoryNameException{
 		ArrayList<String> newPath = new ArrayList<String>();
 
 		for(int i=0;i<category.length();i++){
@@ -22,9 +22,18 @@ public class Admin{
 				j.append(category.charAt(i));
 				i++;				
 			}
-			if(j.length()>0)
-			newPath.add(j.toString());
-		}
+			if(j.length()>0){
+                if(newPath.contains(j.toString())){
+                    throw new CategoryNameException("Category Names Match, Invalid Path Name");
+                }
+                newPath.add(j.toString());
+
+            }
+        }
+        if(newPath.contains(productName)){
+            throw new CategoryNameException("Category Names Match, Invalid Product Name");
+        }
+        else
         newPath.add(productName);
         if(database.searchProduct(productName)==null){
             Node newNode = database.insert(newPath);
@@ -45,11 +54,11 @@ public class Admin{
                 System.out.println("Price and Quantity Updated Successfully");
             }
             else {
-                throw new ProductNameAlreadyExistsException("Product Name ALready Exists");            
+                throw new ProductNameAlreadyExistsException("Product Name ALready Exists1");            
             }
         }
         else {
-            throw new ProductNameAlreadyExistsException("Product Name ALready Exists");
+            throw new ProductNameAlreadyExistsException("Product Name ALready Exists2");
         }
         
 	}
@@ -84,7 +93,7 @@ public class Admin{
                     }
                     foundNode.setPrice(price);
                 }
-                else{
+                else if(priceORunits==2){
                     System.out.println("Please Enter new num of units");
                     int units= input.nextInt();
                     while(units<0){
@@ -102,7 +111,7 @@ public class Admin{
         }	
     }
 
-    public void deleteNode(String nodeName){
+    public void deleteNode(String nodeName)throws InvalidPathException{
         List<String> newPath = new ArrayList<String>();
 
 		for(int i=0;i<nodeName.length();i++){
@@ -118,6 +127,8 @@ public class Admin{
         if(database.deleteNode(newPath)){
             System.out.println("Deleted Successfully");
         }
-        else System.out.println("Path not found!");
+        else {
+            throw new InvalidPathException("Invalid Path");
+        }	
     }
 }

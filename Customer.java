@@ -2,6 +2,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+// import org.graalvm.compiler.hotspot.stubs.OutOfBoundsExceptionStub;
+
 
 public class Customer{
     Database database;
@@ -16,12 +18,13 @@ public class Customer{
         funds=0;        
     }
 
-    public void addFunds(int funds){
+    public void addFunds(int funds)throws UndefinedAmountException{
+        if(funds>0)
         this.funds=this.funds+funds;
-        
+        else throw new UndefinedAmountException("Undefined Amount of Funds");
     }
     
-    public void addProduct(String productName){
+    public void addProduct(String productName)throws OutOfStockException, UndefinedAmountException{
         Node productNode = database.searchProduct(productName);
         for (Pair<Node,Integer> iteratorNode:itemsList){
             if(iteratorNode.getKey()==productNode){
@@ -30,13 +33,8 @@ public class Customer{
                 if(flag==1){
                     System.out.println("Please add new Quantity");
                     int quantity= input.nextInt();
-                    while(quantity>productNode.getUnits()){
-                        System.out.println("Quantity Exceeds Stock Amount\nPlease Add New Quantity, To cancel operation enter -1");
-                        quantity=input.nextInt();
-                        if(quantity<0){
-                            System.out.println("Quantity undefiend, Operation Cancelled");
-                            return;
-                        }
+                    if(quantity>productNode.getUnits()){
+                        throw new OutOfStockException("Quantity Exceeds Stock Amount");
                     }
                     iteratorNode.setValue(quantity);
                     System.out.println("Done");
@@ -50,17 +48,12 @@ public class Customer{
                 System.out.println("Please Specufy Quantity");
                 int quantity= input.nextInt();
                 if(quantity<0){
-                    System.out.println("Quantity undefiend");
-                    return;
+                    throw new UndefinedAmountException("Undefined Amount");
                 }
-                while(quantity>productNode.getUnits()){
-                    System.out.println("Quantity Exceeds Stock Amount\nPlease Add New quantity, To cancel operation enter -1");
-                    quantity=input.nextInt();
-                    if(quantity<0){
-                        System.out.println("Quantity undefiend, Operation Cancelled");
-                        return;
-                    }
+                if(quantity>productNode.getUnits()){
+                    throw new OutOfStockException("Quantity Exceeds Stock Amount");
                 }
+                
                 Pair<Node,Integer> listItem= new Pair<Node,Integer>(productNode,quantity);
                 this.itemsList.add(listItem );
 
@@ -100,9 +93,9 @@ public class Customer{
 
     }
 
-    public void checkOut(){
+    public void checkOut()throws OutofFundsException{
         if(this.billAmount()>this.funds){
-            System.out.println("Bill Amount("+this.billAmount()+") Exceeds Total Funds("+this.funds+") in the Account");
+            throw new OutofFundsException("Out of Funds");
         }
         else{
             this.funds=this.funds-this.billAmount();

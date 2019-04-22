@@ -35,13 +35,12 @@ public class RunApp{
 						admin.deleteNode(nodeName);
 					}
 					catch(Exception e){
-						System.out.println("Exception Catched:"+ e.getMessage());
-						
+						System.out.println("Exception Catched:"+ e.getMessage());						
 					}
 					break;
 				}
 				case 3: {
-					System.out.println("\nPlease Enter Product/Category Name");
+					System.out.println("\nPlease Enter Product");
 					String productName= input.next();
 					try{
 						admin.searchProduct(productName);
@@ -81,19 +80,27 @@ public class RunApp{
 				case 1: {
 					System.out.println("Please enter the amount of funds");
 					int funds = input.nextInt();
-					while(funds<0){
-						System.out.println("PLease enter valid amount of funds");
-						funds=input.nextInt();
+					try{
+						customer.addFunds(funds);
 					}
-					customer.addFunds(funds);
-				System.out.println("Funds added successfully");	
+					catch(Exception e){
+						System.out.println("Exception Catched:"+ e.getMessage());						
+					
+					}
+					System.out.println("Funds added successfully");	
 					break;
 
 				}
 				case 2: {
 					System.out.println("Please Enter Product Name");
 					String productName= input.next();
-					customer.addProduct(productName);
+					try{
+						customer.addProduct(productName);
+					}
+					catch(Exception e){
+						System.out.println("Exception Catched:"+ e.getMessage());						
+					
+					}
 					break;
 				}
 				case 3: {
@@ -103,7 +110,13 @@ public class RunApp{
 					break;
 				}
 				case 4:{
-					customer.checkOut();
+					try{
+						customer.checkOut();
+					}
+					catch(Exception e){
+						System.out.println("Exception Catched:"+ e.getMessage());						
+
+					}
 					break;
 				}
 				case 5:{
